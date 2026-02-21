@@ -1,0 +1,112 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "vcpkg-base",
+            "hidden": true,
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": {
+                    "type": "FILEPATH",
+                    "value": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+                }
+            }
+        },
+        {
+            "name": "system-base",
+            "hidden": true,
+            "description": "Base preset for system-installed Boost (no vcpkg)"
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug (vcpkg)",
+            "description": "Debug build with vcpkg",
+            "inherits": "vcpkg-base",
+            "binaryDir": "${sourceDir}/build/debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release (vcpkg)",
+            "description": "Release build with vcpkg",
+            "inherits": "vcpkg-base",
+            "binaryDir": "${sourceDir}/build/release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "relwithdebinfo",
+            "displayName": "Release with Debug Info (vcpkg)",
+            "description": "Release build with debug information and vcpkg",
+            "inherits": "vcpkg-base",
+            "binaryDir": "${sourceDir}/build/relwithdebinfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "system-debug",
+            "displayName": "Debug (system)",
+            "description": "Debug build using system-installed libraries",
+            "inherits": "system-base",
+            "binaryDir": "${sourceDir}/build/system-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "system-release",
+            "displayName": "Release (system)",
+            "description": "Release build using system-installed libraries",
+            "inherits": "system-base",
+            "binaryDir": "${sourceDir}/build/system-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "system-relwithdebinfo",
+            "displayName": "Release with Debug Info (system)",
+            "description": "Release build with debug info using system-installed libraries",
+            "inherits": "system-base",
+            "binaryDir": "${sourceDir}/build/system-relwithdebinfo",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release"
+        },
+        {
+            "name": "relwithdebinfo",
+            "configurePreset": "relwithdebinfo"
+        },
+        {
+            "name": "system-debug",
+            "configurePreset": "system-debug"
+        },
+        {
+            "name": "system-release",
+            "configurePreset": "system-release"
+        },
+        {
+            "name": "system-relwithdebinfo",
+            "configurePreset": "system-relwithdebinfo"
+        }
+    ]
+}
