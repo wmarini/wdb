@@ -1,5 +1,5 @@
 set (LIBWDB_SOURCES
-    libwdb.cpp
+    process.cpp
 )
 
 add_library(libwdb 
