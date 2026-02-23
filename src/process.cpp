@@ -126,7 +126,7 @@ stop_reason process::wait_on_signal()
     if (is_attached_ and state_ == process_state::stopped) {
         read_all_registers();
     }
-    
+
     return reason;
 }
 
@@ -159,5 +159,18 @@ void process::read_all_registers()
     }
 }
 
+void process::write_fprs(const user_fpregs_struct& fprs)
+{
+    if (ptrace(PTRACE_SETFPREGS, pid_, nullptr, &fprs) < 0) {
+        error::send_errno("Could not write fp registers");
+    }
+}
+
+void process::write_gprs(const user_regs_struct& gprs)
+{
+    if (ptrace(PTRACE_SETREGS, pid_, nullptr, &fprs) < 0) {
+        error::send_errno("Could not write gp registers");
+    }
+}
 
 } // namespace wdb
