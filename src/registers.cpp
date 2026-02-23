@@ -24,7 +24,6 @@ byte128 widen(const register_info& info, T t) {
     }
 
     return to_byte128(t);
-    }
 }
 
 registers::value registers::read(const register_info& info) const {

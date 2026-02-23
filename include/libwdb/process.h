@@ -35,14 +35,14 @@ public:
     stop_reason wait_on_signal();
     pid_t pid() const { return pid_; }
 
-    register& get_registers() { return *registers_; }
-    const register& get_registers() const { return *registers_; }
+    registers& get_registers() { return *registers_; }
+    const registers& get_registers() const { return *registers_; }
 
     void write_user_area(std::size_t offset, std::uint64_t data);
 
     void write_fprs(const user_fpregs_struct& fprs);
     void write_gprs(const user_regs_struct& gprs);
-    
+
     process() = delete;
     process(const process&) = delete;
     process& operator=(const process&) = delete;
@@ -61,7 +61,7 @@ private:
     bool terminate_on_end_ = true;
     process_state state_ = process_state::stopped;
     bool is_attached_ = true;
-    std::unique_ptr<registers> register_;
+    std::unique_ptr<registers> registers_;
 };
 
 } // namespace wdb

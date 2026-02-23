@@ -132,21 +132,21 @@ stop_reason process::wait_on_signal()
 
 void process::write_user_area(std::size_t offset, std::uint64_t data)
 {
-    if (ptrace(PTRACE_POKEUSER, pid_. offset, data) < 0) {
+    if (ptrace(PTRACE_POKEUSER, pid_, offset, data) < 0) {
         error::send_errno("Could not write to user area");
     }
 }
 
 void process::read_all_registers()
 {
-    if (ptrace(PTRACE_GETREGS, pid, nullptr, &get_registers().data_.regs) < 0) {
+    if (ptrace(PTRACE_GETREGS, pid_, nullptr, &get_registers().data_.regs) < 0) {
         error::send_errno("Could not read GPR registers");
     }
-    if (ptrace(PTRACE_GETFPREGS, pid_, nullptr, &get_gereisters().data_.i387) < 0) {
+    if (ptrace(PTRACE_GETFPREGS, pid_, nullptr, &get_registers().data_.i387) < 0) {
         error::send_errno("Could not read FPR registers");
     }
     for (int i = 0; i < 8; ++i) {
-        auto id = static_cast<int>(register_id::dro) + i;
+        auto id = static_cast<int>(register_id::dr0) + i;
         auto info = register_info_by_id(static_cast<register_id>(id));
 
         errno = 0;
@@ -155,7 +155,7 @@ void process::read_all_registers()
             error::send_errno("Could not read debug register");
         }
 
-        get_register().data_.u_debugreg[i] = data;
+        get_registers().data_.u_debugreg[i] = data;
     }
 }
 
@@ -168,7 +168,7 @@ void process::write_fprs(const user_fpregs_struct& fprs)
 
 void process::write_gprs(const user_regs_struct& gprs)
 {
-    if (ptrace(PTRACE_SETREGS, pid_, nullptr, &fprs) < 0) {
+    if (ptrace(PTRACE_SETREGS, pid_, nullptr, &gprs) < 0) {
         error::send_errno("Could not write gp registers");
     }
 }

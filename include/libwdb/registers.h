@@ -24,18 +24,19 @@ public:
     void write(const register_info& info, value val);
     
     template<typename T>
-    T read_by_id_as(registers_id id) const {
+    T read_by_id_as(register_id id) const {
         return std::get<T>(read(register_info_by_id(id)));
     }
+
     void write_by_id(register_id id, value val) {
-        write(register_info_by(id), val);
+        write(register_info_by_id(id), val);
     }
 
 private:
     friend process;
     registers(process& proc) : proc_(&proc) {}
 
-    user data_
+    user data_;
     process* proc_;
 };
 

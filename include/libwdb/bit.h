@@ -1,7 +1,7 @@
 #ifndef WDB_BIT_H
 #define WDB_BIT_H
 
-#include "libwdb/type.h"
+#include "libwdb/types.h"
 #include <cstring>
 
 namespace wdb {
@@ -15,12 +15,12 @@ To from_bytes(const std::byte* bytes) {
 
 template<typename From>
 std::byte* as_bytes(From& from) {
-    return reinterpret_cast<std::bytes*>(&from);
+    return reinterpret_cast<std::byte*>(&from);
 }
 
 template<typename From>
-std::byte* as_bytes(const From& from) {
-    return reinterpret_cast<const std::bytes*>(&from);
+const std::byte* as_bytes(const From& from) {
+    return reinterpret_cast<const std::byte*>(&from);
 }
 
 template <class From>

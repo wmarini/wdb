@@ -1,7 +1,7 @@
 set (LIBWDB_SOURCES
     process.cpp
     pipe.cpp
-    register.cpp
+    registers.cpp
 )
 
 add_library(libwdb 
