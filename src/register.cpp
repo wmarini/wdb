@@ -1,5 +1,7 @@
 #include "libwdb/registers.h"
 #include "libwdb/bit.h"
+#include "libwdb/process.h"
+#include <iostream>
 
 namespace wdb {
 
@@ -29,4 +31,29 @@ registers::value registers::read(const register_info& info) const {
     }
 }
 
+void registers::write(const register_info& info, value val) {
+    auto bytes = as_bytes(data_);
+
+    std::visit([&](auto& v) {
+        if (sizeof(v) <= info.size) {
+            auto wide = widen(info, v);
+            auto val_bytes = as_bytes(wide);
+            std::copy(val_bytes, val_bytes + info.size, bytes + info.offset);
+        }
+        else {
+            std::cerr << "wdb::register::write called with mismatched"
+                "register and value sizes";
+            std::terminate();
+        }
+        }, val);
+
+    if (info.type == register_type::fpr) {
+        proc_->write_fprs(data_.i387);
+    }
+    else {
+        auto aligned_offset = info.offset & ~0b111;
+        proc_->write_user_area(aligned_offset,
+            from_bytes<std::uint64_t>(bytes + aligned_offset));
+    }
+}
 } // namespace wdb
