@@ -1,6 +1,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <libwdb/process.h>
 #include <libwdb/error.h>
+#include <libwdb/pipe.h>
+#include <libwdb/bit.h>
 #include <signal.h>
 #include <fstream>
 
@@ -65,4 +67,53 @@ TEST_CASE("process::resume already terminated", "[process]") {
     proc->resume();
     proc->wait_on_signal();
     REQUIRE_THROWS_AS(proc->resume(), error);
+}
+
+TEST_CASE("Write register works", "[register]") {
+    bool close_on_exec = false;
+    wdb::pipe channel(close_on_exec);
+
+    auto proc = process::launch(
+        "targets/reg_write", true, channel.get_write());
+    channel.close_write();
+
+    proc->resume();
+    proc->wait_on_signal();
+
+    auto& regs = proc->get_registers();
+    regs.write_by_id(register_id::rsi, 0xcafecafe);
+
+    proc->resume();
+    proc->wait_on_signal();
+
+    auto output = channel.read();
+    REQUIRE(to_string_view(output) == "0xcafecafe");
+
+    regs.write_by_id(register_id::mm0, 0xba5eba11);
+
+    proc->resume();
+    proc->wait_on_signal();
+
+    output = channel.read();
+    REQUIRE(to_string_view(output) == "0xba5eba11");
+
+    regs.write_by_id(register_id::xmm0, 42.24);
+
+    proc->resume();
+    proc->wait_on_signal();
+
+    output = channel.read();
+    REQUIRE(to_string_view(output) == "42.24");
+
+    regs.write_by_id(register_id::st0, 42.24l);
+    regs.write_by_id(register_id::fsw,
+        std::uint16_t{ 0b0011100000000000 });
+    regs.write_by_id(register_id::ftw,
+        std::uint16_t{ 0b0011111111111111 });
+
+    proc->resume();
+    proc->wait_on_signal();
+
+    output = channel.read();
+    REQUIRE(to_string_view(output) == "42.24");
 }

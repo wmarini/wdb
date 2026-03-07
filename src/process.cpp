@@ -51,7 +51,8 @@ process::~process()
 }
 
 std::unique_ptr<process> process::launch(
-    std::filesystem::path path, bool debug)
+    std::filesystem::path path, bool debug,
+    std::optional<int> stdout_replacement)
 {
     pipe channel(/*close_on_exec=*/true);
 
@@ -62,6 +63,10 @@ std::unique_ptr<process> process::launch(
 
     if (pid == 0) {
         channel.close_read();
+        if (stdout_replacement and 
+            dup2(*stdout_replacement, STDOUT_FILENO) < 0) {
+            exit_with_perror(channel, "stdout replacement failed");    
+        }
         if (debug and ptrace(PTRACE_TRACEME, 0, nullptr, nullptr) < 0) {
             exit_with_perror(channel, "Tracing failed");
         }

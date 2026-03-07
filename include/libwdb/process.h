@@ -2,9 +2,10 @@
 #define WDB_PROCESS_H
 
 #include "libwdb/registers.h"
+#include <sys/types.h>
 #include <filesystem>
 #include <memory>
-#include <sys/types.h>
+#include <optional>
 
 namespace wdb {
 
@@ -27,7 +28,8 @@ public:
     ~process();
 
     static std::unique_ptr<process> launch(
-        std::filesystem::path path, bool debug = true);
+        std::filesystem::path path, bool debug = true,
+        std::optional<int> stdout_replacement = std::nullopt);
     static std::unique_ptr<process> attach(pid_t pid);
 
     process_state state() const { return state_; }
