@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 
 project(wdb
     VERSION 0.0.1
-    LANGUAGES CXX
+    LANGUAGES CXX ASM
     DESCRIPTION "wdb is a native debugger"
 )
 
